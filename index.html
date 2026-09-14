@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>班级同学信息收集表</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #20242c;
+      --muted: #687080;
+      --line: #dfe3eb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --danger: #dc2626;
+      --ok: #0f766e;
+      --shadow: 0 14px 35px rgba(30, 41, 59, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.08), transparent 35%),
+        linear-gradient(315deg, rgba(15, 118, 110, 0.08), transparent 35%),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 56px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .privacy {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ok);
+      background: rgba(255, 255, 255, 0.74);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 430px) 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    form {
+      padding: 24px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      color: #2b3140;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .required {
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid #cfd6e2;
+      border-radius: 8px;
+      padding: 12px 13px;
+      color: var(--text);
+      background: #fff;
+      font: inherit;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.13);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      flex: 1;
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .secondary {
+      color: var(--text);
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .secondary:hover {
+      border-color: #b8c2d1;
+      background: #f8fafc;
+    }
+
+    .status {
+      min-height: 22px;
+      margin: 14px 0 0;
+      color: var(--ok);
+      font-size: 14px;
+    }
+
+    .list-panel {
+      overflow: hidden;
+    }
+
+    .list-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid #edf0f5;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      color: #455064;
+      background: #f8fafc;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    td {
+      color: #2f3543;
+      line-height: 1.55;
+    }
+
+    .empty {
+      padding: 54px 24px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .delete {
+      color: var(--danger);
+      background: transparent;
+      border: 1px solid #fecaca;
+      padding: 8px 10px;
+      white-space: nowrap;
+    }
+
+    .delete:hover {
+      background: #fff1f2;
+    }
+
+    @media (max-width: 860px) {
+      header {
+        display: block;
+      }
+
+      .privacy {
+        margin-top: 16px;
+        white-space: normal;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        width: min(100% - 22px, 680px);
+        padding-top: 26px;
+      }
+
+      form {
+        padding: 18px;
+      }
+
+      .list-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .tools {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>班级同学信息收集表</h1>
+        <p class="subtitle">请填写常用联系方式，方便班级通讯录整理和后续联系。提交后可在右侧查看记录，并导出为 CSV 表格。</p>
+      </div>
+      <div class="privacy">仅用于班级联系，请勿外传</div>
+    </header>
+
+    <section class="layout">
+      <form class="panel" id="studentForm">
+        <div class="field">
+          <label for="name">姓名 <span class="required">必填</span></label>
+          <input id="name" name="name" autocomplete="name" required placeholder="请输入姓名">
+        </div>
+
+        <div class="field">
+          <label for="phone">手机号码 <span class="required">必填</span></label>
+          <input id="phone" name="phone" inputmode="tel" autocomplete="tel" required placeholder="请输入 11 位手机号码">
+        </div>
+
+        <div class="field">
+          <label for="wechat">微信号</label>
+          <input id="wechat" name="wechat" autocomplete="off" placeholder="请输入微信号">
+        </div>
+
+        <div class="field">
+          <label for="company">工作单位</label>
+          <input id="company" name="company" autocomplete="organization" placeholder="请输入工作单位">
+        </div>
+
+        <div class="field">
+          <label for="address">地址</label>
+          <textarea id="address" name="address" autocomplete="street-address" placeholder="请输入常住地址或收件地址"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="primary" type="submit">提交信息</button>
+          <button class="secondary" type="reset">清空</button>
+        </div>
+        <p class="status" id="status" aria-live="polite"></p>
+      </form>
+
+      <section class="panel list-panel" aria-labelledby="listTitle">
+        <div class="list-head">
+          <h2 id="listTitle">已提交名单（<span id="count">0</span>）</h2>
+          <div class="tools">
+            <button class="secondary" type="button" id="exportBtn">导出 CSV</button>
+            <button class="secondary" type="button" id="clearBtn">清空名单</button>
+          </div>
+        </div>
+        <div id="list"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "classmate-directory-records";
+    const form = document.querySelector("#studentForm");
+    const list = document.querySelector("#list");
+    const count = document.querySelector("#count");
+    const status = document.querySelector("#status");
+    const exportBtn = document.querySelector("#exportBtn");
+    const clearBtn = document.querySelector("#clearBtn");
+
+    let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+    function saveRecords() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function clean(value) {
+      return value.trim().replace(/\s+/g, " ");
+    }
+
+    function render() {
+      count.textContent = records.length;
+
+      if (records.length === 0) {
+        list.innerHTML = '<div class="empty">还没有提交记录。填写左侧表单后，名单会显示在这里。</div>';
+        return;
+      }
+
+      const rows = records.map((item, index) => `
+        <tr>
+          <td>${escapeHtml(item.name)}</td>
+          <td>${escapeHtml(item.phone)}</td>
+          <td>${escapeHtml(item.wechat || "-")}</td>
+          <td>${escapeHtml(item.company || "-")}</td>
+          <td>${escapeHtml(item.address || "-")}</td>
+          <td><button class="delete" type="button" data-index="${index}">删除</button></td>
+        </tr>
+      `).join("");
+
+      list.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>姓名</th>
+                <th>手机号码</th>
+                <th>微信号</th>
+                <th>工作单位</th>
+                <th>地址</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function toCsvValue(value) {
+      return `"${String(value || "").replaceAll('"', '""')}"`;
+    }
+
+    function downloadCsv() {
+      if (records.length === 0) {
+        status.textContent = "当前没有可导出的记录。";
+        return;
+      }
+
+      const header = ["姓名", "手机号码", "微信号", "工作单位", "地址"];
+      const body = records.map((item) => [
+        item.name,
+        item.phone,
+        item.wechat,
+        item.company,
+        item.address
+      ].map(toCsvValue).join(","));
+      const csv = "\ufeff" + [header.join(","), ...body].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "班级同学信息.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+      status.textContent = "CSV 已导出。";
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const data = new FormData(form);
+      const phone = clean(data.get("phone"));
+      if (!/^1[3-9]\d{9}$/.test(phone)) {
+        status.textContent = "请输入正确的 11 位中国大陆手机号码。";
+        document.querySelector("#phone").focus();
+        return;
+      }
+
+      records.push({
+        name: clean(data.get("name")),
+        phone,
+        wechat: clean(data.get("wechat")),
+        company: clean(data.get("company")),
+        address: clean(data.get("address"))
+      });
+
+      saveRecords();
+      render();
+      form.reset();
+      document.querySelector("#name").focus();
+      status.textContent = "已提交，名单已更新。";
+    });
+
+    list.addEventListener("click", (event) => {
+      if (!event.target.matches(".delete")) return;
+      records.splice(Number(event.target.dataset.index), 1);
+      saveRecords();
+      render();
+      status.textContent = "已删除该条记录。";
+    });
+
+    exportBtn.addEventListener("click", downloadCsv);
+
+    clearBtn.addEventListener("click", () => {
+      if (records.length === 0) return;
+      if (!confirm("确定清空所有已提交记录吗？")) return;
+      records = [];
+      saveRecords();
+      render();
+      status.textContent = "名单已清空。";
+    });
+
+    render();
+  </script>
+</body>
+</html>
